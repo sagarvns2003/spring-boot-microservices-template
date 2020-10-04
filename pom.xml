@@ -30,8 +30,8 @@
 	</developers>
 
 	<modules>
-		<module>sb-admin-dashboard</module>
-		<!-- <module>sb-client-payment</module> -->
+		<module>sb-admin-dashboard</module>  <!-- Admin server service -->
+		<module>sb-payment-service</module>  <!-- Client service -->
 	</modules>
 
 	<dependencies>
