@@ -12,7 +12,7 @@
 	</parent>
 
 	<artifactId>sb-admin-dashboard</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 	<name>sb-admin-dashboard</name>
 	<description>Spring Boot Admin dashboard service</description>
@@ -40,17 +40,15 @@
 			<artifactId>spring-boot-admin-starter-client</artifactId>
 			<version>2.3.0</version>
 		</dependency>
-		
+
 		<!--Add login page and logout feature -->
 		<dependency>
 			<groupId>de.codecentric</groupId>
 			<artifactId>spring-boot-admin-server-ui-login</artifactId>
 			<version>1.5.7</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-security</artifactId> 
+			</dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -68,7 +66,7 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
@@ -76,10 +74,17 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<developers>
 		<developer>
 			<name>Vidya Sagar Gupta</name>
