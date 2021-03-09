@@ -33,7 +33,7 @@ public class LeaderElectionService {
 
 	public void disconnect() {
 		jGroupChannel.close();
-		System.out.println("Disconnected from the jGroup clister.");
+		System.out.println("Disconnected from the jGroup cluster.");
 	}
 
 	/**
