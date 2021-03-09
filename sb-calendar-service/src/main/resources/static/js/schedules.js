@@ -52,16 +52,17 @@ function ScheduleInfo() {
     };
 }
 
+/*
 function generateTime(schedule, renderStart, renderEnd) {
     var startDate = moment(renderStart.getTime())
     var endDate = moment(renderEnd.getTime());
     var diffDate = endDate.diff(startDate, 'days');
 
-    schedule.isAllday = chance.bool({likelihood: 30});
+    schedule.isAllday = chance.bool({ likelihood: 30 });
     if (schedule.isAllday) {
         schedule.category = 'allday';
-    } else if (chance.bool({likelihood: 30})) {
-        schedule.category = SCHEDULE_CATEGORY[chance.integer({min: 0, max: 1})];
+    } else if (chance.bool({ likelihood: 30 })) {
+        schedule.category = SCHEDULE_CATEGORY[chance.integer({ min: 0, max: 1 })];
         if (schedule.category === SCHEDULE_CATEGORY[1]) {
             schedule.dueDateClass = 'morning';
         }
@@ -69,34 +70,35 @@ function generateTime(schedule, renderStart, renderEnd) {
         schedule.category = 'time';
     }
 
-    startDate.add(chance.integer({min: 0, max: diffDate}), 'days');
-    startDate.hours(chance.integer({min: 0, max: 23}))
+    startDate.add(chance.integer({ min: 0, max: diffDate }), 'days');
+    startDate.hours(chance.integer({ min: 0, max: 23 }))
     startDate.minutes(chance.bool() ? 0 : 30);
     schedule.start = startDate.toDate();
 
     endDate = moment(startDate);
     if (schedule.isAllday) {
-        endDate.add(chance.integer({min: 0, max: 3}), 'days');
+        endDate.add(chance.integer({ min: 0, max: 3 }), 'days');
     }
 
     schedule.end = endDate
-        .add(chance.integer({min: 1, max: 4}), 'hour')
+        .add(chance.integer({ min: 1, max: 4 }), 'hour')
         .toDate();
 
-    if (!schedule.isAllday && chance.bool({likelihood: 20})) {
-        schedule.goingDuration = chance.integer({min: 30, max: 120});
-        schedule.comingDuration = chance.integer({min: 30, max: 120});;
+    if (!schedule.isAllday && chance.bool({ likelihood: 20 })) {
+        schedule.goingDuration = chance.integer({ min: 30, max: 120 });
+        schedule.comingDuration = chance.integer({ min: 30, max: 120 });;
 
-        if (chance.bool({likelihood: 50})) {
+        if (chance.bool({ likelihood: 50 })) {
             schedule.end = schedule.start;
         }
     }
 }
 
+
 function generateNames() {
     var names = [];
     var i = 0;
-    var length = chance.integer({min: 1, max: 10});
+    var length = chance.integer({ min: 1, max: 10 });
 
     for (; i < length; i += 1) {
         names.push(chance.name());
@@ -111,16 +113,16 @@ function generateRandomSchedule(calendar, renderStart, renderEnd) {
     schedule.id = chance.guid();
     schedule.calendarId = calendar.id;
 
-    schedule.title = chance.sentence({words: 3});
-    schedule.body = chance.bool({likelihood: 20}) ? chance.sentence({words: 10}) : '';
-    schedule.isReadOnly = chance.bool({likelihood: 20});
+    schedule.title = chance.sentence({ words: 3 });
+    schedule.body = chance.bool({ likelihood: 20 }) ? chance.sentence({ words: 10 }) : '';
+    schedule.isReadOnly = chance.bool({ likelihood: 20 });
     generateTime(schedule, renderStart, renderEnd);
 
-    schedule.isPrivate = chance.bool({likelihood: 10});
+    schedule.isPrivate = chance.bool({ likelihood: 10 });
     schedule.location = chance.address();
-    schedule.attendees = chance.bool({likelihood: 70}) ? generateNames() : [];
-    schedule.recurrenceRule = chance.bool({likelihood: 20}) ? 'repeated events' : '';
-    schedule.state = chance.bool({likelihood: 20}) ? 'Free' : 'Busy';
+    schedule.attendees = chance.bool({ likelihood: 70 }) ? generateNames() : [];
+    schedule.recurrenceRule = chance.bool({ likelihood: 20 }) ? 'repeated events' : '';
+    schedule.state = chance.bool({ likelihood: 20 }) ? 'Free' : 'Busy';
     schedule.color = calendar.color;
     schedule.bgColor = calendar.bgColor;
     schedule.dragBgColor = calendar.dragBgColor;
@@ -151,7 +153,7 @@ function generateRandomSchedule(calendar, renderStart, renderEnd) {
 
 function generateSchedule(viewName, renderStart, renderEnd) {
     ScheduleList = [];
-    CalendarList.forEach(function(calendar) {
+    CalendarList.forEach(function (calendar) {
         var i = 0, length = 10;
         if (viewName === 'month') {
             length = 3;
@@ -162,4 +164,86 @@ function generateSchedule(viewName, renderStart, renderEnd) {
             generateRandomSchedule(calendar, renderStart, renderEnd);
         }
     });
+}  */
+
+function getEvents(startDate, endDate) {
+    var data = [];
+    ScheduleList = [];
+    $.ajax({
+        url: "/v1/calendar/entry",
+        type: "GET",
+        async: false,
+        cache: false,
+        dataType: "json",
+        data: {
+            dateStart: startDate,
+            dateEnd: endDate,
+            type: "",
+            canceled: false           
+        },
+        beforeSend: function () {
+            //show spinner
+            $("#spinner-overlay").fadeIn(300);　
+        },
+        success: function (response, status, xhr){
+            console.log("status", xhr.status);
+            console.log("status text", xhr.statusText);
+            console.log("response data", response);
+            data = response;
+        },
+        error: function (xhr) {
+            console.log("Error occured >>>", xhr);
+        },
+        complete: function () {
+            $("#spinner-overlay").fadeOut(300);  //hide spinner
+        }
+    });
+    return data;
+}
+
+function populateSchedule(eventData, calendar) {
+    var schedule = new ScheduleInfo();
+
+    schedule.id = eventData.id;
+    schedule.calendarId = eventData.calendarId;
+
+    schedule.title = eventData.title;
+    schedule.body = eventData.body;
+    schedule.category = eventData.category;
+    schedule.isReadOnly = false;
+    //generateTime(schedule, renderStart, renderEnd);
+    schedule.start = eventData.start;
+    schedule.end = eventData.end;
+
+    schedule.isPrivate = false;
+    schedule.location = eventData.location;
+    schedule.attendees = eventData.attendees;
+    schedule.recurrenceRule = ''; //'repeated events'
+    schedule.state = 'Free'; //'Busy';
+    schedule.color = calendar.color;
+    schedule.bgColor = calendar.bgColor;
+    schedule.dragBgColor = calendar.dragBgColor;
+    schedule.borderColor = calendar.borderColor;
+
+    if (schedule.category === 'milestone') {
+        schedule.color = schedule.bgColor;
+        schedule.bgColor = 'transparent';
+        schedule.dragBgColor = 'transparent';
+        schedule.borderColor = 'transparent';
+    }
+
+    //schedule.raw.memo = chance.sentence();
+    schedule.raw.creator.name = eventData.createdBy.name;
+    schedule.raw.creator.avatar = eventData.createdBy.avatar;
+    //schedule.raw.creator.company = chance.company();
+    schedule.raw.creator.email = eventData.createdBy.email;
+    schedule.raw.creator.phone = eventData.createdBy.phone;
+
+ /*    if (chance.bool({ likelihood: 20 })) {
+        var travelTime = chance.minute();
+        schedule.goingDuration = travelTime;
+        schedule.comingDuration = travelTime;
+    }
+ */
+    ScheduleList.push(schedule);
 }

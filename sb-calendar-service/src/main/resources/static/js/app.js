@@ -12,6 +12,9 @@
     var datePicker, selectedCalendar;
 
     cal = new Calendar('#calendar', {
+        usageStatistics: false,
+        disableDblClick: false,
+        disableClick: true,
         defaultView: 'week',  //'day', 'week', 'month'
         taskView: false,      // hides the milestone and task in weekly, daily view
         scheduleView: true,   // shows the all day and time grid in weekly, daily view
@@ -22,12 +25,12 @@
         month: {
             daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             startDayOfWeek: 1,   //1 is for Mon
-            //narrowWeekend: true
+            narrowWeekend: false
         },
         week: {
             daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             startDayOfWeek: 1,
-            //narrowWeekend: true
+            narrowWeekend: false
         },
         template: {
             milestone: function(model) {
@@ -416,12 +419,34 @@
 
     function setSchedules() {
         cal.clear();
-        //TODO: Call server for the ScheduleList
-        generateSchedule(cal.getViewName(), cal.getDateRangeStart(), cal.getDateRangeEnd());
-        console.log("ScheduleList >>> " + JSON.stringify(ScheduleList));
-        cal.createSchedules(ScheduleList);
+        console.log("View Name", cal.getViewName());
+        //console.log("DateRangeStart >>> " + JSON.stringify(cal.getDateRangeStart()));
+        //console.log("DateRangeEnd >>> " + JSON.stringify(cal.getDateRangeEnd()));
+        
+        var startDate = cal.getDateRangeStart().toDate().toISOString();
+        var endDate = cal.getDateRangeEnd().toDate();
+        //Set time to midnight of the same day. This makes end date inclusive of last day
+        endDate.setHours(23,59,59,99);
+        endDate = endDate.toISOString();
+        
+        //Call server for the ScheduleList
+        var data = getEvents(startDate, endDate);
+        //console.log("data", data);
+        data.forEach(function (eventData) {
+            CalendarList.forEach(function (calendar) {
+                if (eventData.type === calendar.type) {
+                    populateSchedule(eventData, calendar);
+                }
+            });
+        });
 
+        console.log("ScheduleList", ScheduleList);
+        cal.createSchedules(ScheduleList);
         refreshScheduleVisibility();
+
+        //generateSchedule(cal.getViewName(), cal.getDateRangeStart(), cal.getDateRangeEnd());
+        //cal.createSchedules(ScheduleList);
+        //refreshScheduleVisibility();
     }
 
     function setEventListener() {

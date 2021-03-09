@@ -1,4 +1,4 @@
-package com.vidya.calendar.web;
+package com.vidya.cal.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
