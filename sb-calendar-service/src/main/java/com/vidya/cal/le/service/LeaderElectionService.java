@@ -2,12 +2,16 @@ package com.vidya.cal.le.service;
 
 import org.jgroups.Address;
 import org.jgroups.JChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LeaderElectionService {
+
+	private static final Logger logger = LoggerFactory.getLogger(LeaderElectionService.class);
 
 	@Autowired
 	@Qualifier(value = "jGroupChannel")
@@ -33,7 +37,7 @@ public class LeaderElectionService {
 
 	public void disconnect() {
 		jGroupChannel.close();
-		System.out.println("Disconnected from the jGroup cluster.");
+		logger.info("Disconnected from the jGroup cluster.");
 	}
 
 	/**
@@ -42,9 +46,9 @@ public class LeaderElectionService {
 	public void checkLeaderStatus() {
 		Address address = jGroupChannel.getView().getMembers().get(0);
 		if (address.equals(jGroupChannel.getAddress())) {
-			System.out.println("I'm (" + jGroupChannel.getAddress() + ") the leader");
+			logger.info("I'm (" + jGroupChannel.getAddress() + ") the leader");
 		} else {
-			System.out.println("I'm (" + jGroupChannel.getAddress() + ") not the leader");
+			logger.info("I'm (" + jGroupChannel.getAddress() + ") not the leader");
 		}
 	}
 }
