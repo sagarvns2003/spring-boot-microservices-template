@@ -166,6 +166,41 @@ function generateSchedule(viewName, renderStart, renderEnd) {
     });
 }  */
 
+function getEventStream(startDate, endDate) {
+
+	var w = $.SSE("/v1/calendar/entry", {
+            onOpen: function (e) {
+                console.log("Open");
+                console.log(e);
+            },
+            onEnd: function (e) {
+                console.log("End");
+                console.log(e);
+            },
+            onError: function (e) {
+                console.log("Could not connect");
+            },
+            onMessage: function (e) {
+                console.log("Message");
+                console.log(e);
+            },
+            options: {
+                forceAjax: false
+            },
+            events: {
+                myEvent: function (e) {
+                    console.log('Custom Event');
+                    console.log(e);
+                }
+            },
+//            headers: {
+//                'Authorization': 'Bearer 000000000000000000000'
+//            }
+        });
+        
+        console.log(w.start());
+}
+
 function getEvents(startDate, endDate) {
     var data = [];
     ScheduleList = [];

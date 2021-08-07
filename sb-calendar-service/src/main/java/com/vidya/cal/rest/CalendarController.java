@@ -2,6 +2,8 @@ package com.vidya.cal.rest;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEventBuilder;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.vidya.cal.model.CalendarEvent;
 import com.vidya.cal.service.CalendarService;
 
@@ -24,18 +27,47 @@ import com.vidya.cal.service.CalendarService;
 @RequestMapping("/v1/calendar")
 public class CalendarController {
 
+	private ExecutorService nonBlockingService = Executors.newCachedThreadPool();
+
 	@Autowired
 	private CalendarService calendarService;
-	
+
 	@GetMapping(value = "/entry", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<CalendarEvent> findEventsByDateRange(@RequestParam(required = true) String dateStart,
 			@RequestParam(required = true) String dateEnd, @RequestParam(required = false) String type,
 			@RequestParam(required = false) boolean canceled) {
 
-		List<CalendarEvent> entries = calendarService.findEventsByDateRange(Instant.parse(dateStart), Instant.parse(dateEnd), type, canceled);
-		
-		return entries; 
+		List<CalendarEvent> entries = calendarService.findEventsByDateRange(Instant.parse(dateStart),
+				Instant.parse(dateEnd), type, canceled);
+
+		return entries;
+	}
+
+	@GetMapping(value = "/entry-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public SseEmitter findEventsByDateRangeSSE(@RequestParam(required = true) String dateStart,
+			@RequestParam(required = true) String dateEnd, @RequestParam(required = false) String type,
+			@RequestParam(required = false) boolean canceled) {
+		SseEmitter emitter = new SseEmitter();
+		nonBlockingService.execute(() -> {
+			try {
+				for (int i = 0; true; i++) {
+					List<CalendarEvent> entries = calendarService.findEventsByDateRangeFromMultipleSource(Instant.parse(dateStart),
+							Instant.parse(dateEnd), type, canceled);
+					
+					SseEventBuilder event = SseEmitter.event()
+							.id(String.valueOf(i))
+							.name("view calender entry")
+							.data(entries, MediaType.APPLICATION_JSON);
+					
+					emitter.send(event);
+					Thread.sleep(2000);
+				}
+			} catch (Exception ex) {
+				emitter.completeWithError(ex);
+			}
+		});
+		return emitter;
 	}
 
 	@PostMapping(value = "/entry")
