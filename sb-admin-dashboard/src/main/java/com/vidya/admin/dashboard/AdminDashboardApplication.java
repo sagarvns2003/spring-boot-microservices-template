@@ -24,5 +24,5 @@ public class AdminDashboardApplication {
 	 * @SuppressWarnings("unused") public void addCorsMappings(CorsRegistry
 	 * registry) { registry.addMapping("/instances/").allowedOrigins("*"); } }; }
 	 */
-
+	
 }
