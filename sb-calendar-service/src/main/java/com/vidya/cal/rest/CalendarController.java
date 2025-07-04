@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +28,8 @@ import com.vidya.cal.service.CalendarService;
 @RestController
 @RequestMapping("/v1/calendar")
 public class CalendarController {
+
+	private static final Logger logger = LoggerFactory.getLogger(CalendarController.class);
 
 	private ExecutorService nonBlockingService = Executors.newCachedThreadPool();
 
@@ -52,14 +56,12 @@ public class CalendarController {
 		nonBlockingService.execute(() -> {
 			try {
 				for (int i = 0; true; i++) {
-					List<CalendarEvent> entries = calendarService.findEventsByDateRangeFromMultipleSource(Instant.parse(dateStart),
-							Instant.parse(dateEnd), type, canceled);
-					
-					SseEventBuilder event = SseEmitter.event()
-							.id(String.valueOf(i))
-							.name("view calender entry")
+					List<CalendarEvent> entries = calendarService.findEventsByDateRangeFromMultipleSource(
+							Instant.parse(dateStart), Instant.parse(dateEnd), type, canceled);
+
+					SseEventBuilder event = SseEmitter.event().id(String.valueOf(i)).name("view calender entry")
 							.data(entries, MediaType.APPLICATION_JSON);
-					
+
 					emitter.send(event);
 					Thread.sleep(2000);
 				}

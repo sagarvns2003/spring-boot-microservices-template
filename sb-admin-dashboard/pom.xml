@@ -8,7 +8,7 @@
 		<groupId>com.vidya.spring-boot-microservices-template</groupId>
 		<artifactId>spring-boot-microservices-template</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>sb-admin-dashboard</artifactId>
@@ -19,6 +19,7 @@
 
 	<properties>
 		<java.version>17</java.version>
+		<spring-boot-admin.version>3.5.0</spring-boot-admin.version>
 	</properties>
 
 	<dependencies>
@@ -31,14 +32,12 @@
 		<dependency>
 			<groupId>de.codecentric</groupId>
 			<artifactId>spring-boot-admin-starter-server</artifactId>
-			<version>2.4.3</version>
 		</dependency>
 
 		<!--declare the admin server as a client also, for self monitoring -->
 		<dependency>
 			<groupId>de.codecentric</groupId>
 			<artifactId>spring-boot-admin-starter-client</artifactId>
-			<version>2.4.3</version>
 		</dependency>
 
 		<!--Add login page and logout feature -->
@@ -68,15 +67,19 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.20</version>
-			<scope>provided</scope>
-		</dependency>
-
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>de.codecentric</groupId>
+				<artifactId>spring-boot-admin-dependencies</artifactId>
+				<version>${spring-boot-admin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<plugins>
@@ -106,7 +109,7 @@
 		<developer>
 			<name>Vidya Sagar Gupta</name>
 			<email>v3sagar@gmail.com</email>
-			<url>https://www.linkedin.com/in/v3sagar</url>
+			<url>https://www.linkedin.com/in/vidyasagar-gupta/</url>
 		</developer>
 	</developers>
 </project>
