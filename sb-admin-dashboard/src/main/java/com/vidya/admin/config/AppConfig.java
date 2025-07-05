@@ -2,6 +2,9 @@ package com.vidya.admin.config;
 
 //import java.util.UUID;
 
+import de.codecentric.boot.admin.server.web.client.InstanceExchangeFilterFunction;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 /*import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.http.HttpMethod;
@@ -15,16 +18,29 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; */
 
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
+import org.springframework.http.HttpMethod;
 
+@Slf4j
 @Configuration
 //@EnableWebSecurity
-public class DashboardSecurityConfig { // extends WebSecurityConfigurerAdapter {
+public class AppConfig { // extends WebSecurityConfigurerAdapter {
     private final AdminServerProperties adminServer;
 
-    public DashboardSecurityConfig(AdminServerProperties adminServer) {
+    public AppConfig(AdminServerProperties adminServer) {
         this.adminServer = adminServer;
     }
-    
+
+    @Bean
+    public InstanceExchangeFilterFunction auditLog() {
+        return (instance, request, next) -> next.exchange(request).doOnSubscribe((s) -> {
+            /*if (HttpMethod.GET.equals(request.method())) {
+                log.info("{} for {} on {}", request.method(), instance.getId(), request.url());
+            }*/
+            if (HttpMethod.DELETE.equals(request.method()) || HttpMethod.POST.equals(request.method())) {
+                log.info("{} for {} on {}", request.method(), instance.getId(), request.url());
+            }
+        });
+    }
      /*
     @Override
     protected void configure(HttpSecurity http) throws Exception {
