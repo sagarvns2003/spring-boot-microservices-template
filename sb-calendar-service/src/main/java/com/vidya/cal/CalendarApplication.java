@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class CalendarApplication {
 
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(CalendarApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(CalendarApplication.class, args);
+  }
 }
