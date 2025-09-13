@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.3</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.5</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-	<groupId>com.vidya.spring-boot-microservices-template</groupId>
-	<artifactId>spring-boot-microservices-template</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>spring-boot-microservices-template</name>
+    <groupId>com.vidya.spring-boot-microservices-template</groupId>
+    <artifactId>spring-boot-microservices-template</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>spring-boot-microservices-template</name>
 
-	<properties>
-		<java.version>17</java.version>
-	</properties>
+    <properties>
+        <java.version>17</java.version>
+    </properties>
 
-	<developers>
-		<developer>
-			<name>Vidya Sagar Gupta</name>
-			<email>v3sagar@gmail.com</email>
-			<url>https://www.linkedin.com/in/vidyasagar-gupta/</url>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <name>Vidya Sagar Gupta</name>
+            <email>v3sagar@gmail.com</email>
+            <url>https://www.linkedin.com/in/vidyasagar-gupta/</url>
+        </developer>
+    </developers>
 
-	<modules>
-		<module>sb-admin-dashboard</module>     <!-- Admin server service -->
-		<module>sb-payment-service</module>     <!-- Client service -->
-		<module>sb-calendar-service</module>    <!-- Client service -->
-	</modules>
+    <modules>
+        <module>sb-admin-dashboard</module>     <!-- Admin server service -->
+        <module>sb-auth-service</module>        <!-- Client service -->
+        <module>sb-payment-service</module>     <!-- Client service -->
+        <module>sb-calendar-service</module>    <!-- Client service -->
+    </modules>
 
-	<dependencies>
-	</dependencies>
+    <dependencies>
+    </dependencies>
 
-	<build>
-		<plugins>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+        </plugins>
+    </build>
 
 </project>
